@@ -1,4 +1,4 @@
-// script.js
+/*
 
 let currentInput = '';
 
@@ -25,5 +25,27 @@ function calculateResult() {
         document.getElementById('result').value = currentInput;
     } catch (error) {
         document.getElementById('result').value = 'Error';
+    }
+}
+*/
+function addToDisplay(value) {
+    document.getElementById('display').innerText += value;
+}
+
+function clearDisplay() {
+    document.getElementById('display').innerText = '';
+}
+
+function backspace() {
+    let display = document.getElementById('display');
+    display.innerText = display.innerText.slice(0, -1);
+}
+
+function calculate() {
+    let display = document.getElementById('display');
+    try {
+        display.innerText = eval(display.innerText);
+    } catch (e) {
+        display.innerText = 'Error';
     }
 }
