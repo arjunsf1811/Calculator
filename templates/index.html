@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Picker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #f4f4f9;
+        }
+        .container {
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .color-box {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .hsv-values {
+            margin-top: 20px;
+        }
+        .hsv-values div {
+            margin: 5px 0;
+        }
+        input[type="color"] {
+            width: 100%;
+            height: 40px;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Color Picker</h1>
+        <input type="color" id="colorPicker">
+        <div class="color-box" id="colorBox"></div>
+        <div class="sliders">
+            <input type="range" min="0" max="255" id="redSlider" class="slider">
+            <input type="range" min="0" max="255" id="greenSlider" class="slider">
+            <input type="range" min="0" max="255" id="blueSlider" class="slider">
+        </div>
+        <div class="hsv-values">
+            <div id="hueValue">Hue: 0</div>
+            <div id="saturationValue">Saturation: 0%</div>
+            <div id="valueValue">Value: 0%</div>
+        </div>
+    </div>
+    <script>
+        const colorPicker = document.getElementById('colorPicker');
+        const colorBox = document.getElementById('colorBox');
+        const redSlider = document.getElementById('redSlider');
+        const greenSlider = document.getElementById('greenSlider');
+        const blueSlider = document.getElementById('blueSlider');
+        const hueValue = document.getElementById('hueValue');
+        const saturationValue = document.getElementById('saturationValue');
+        const valueValue = document.getElementById('valueValue');
+
+        colorPicker.addEventListener('input', updateColorFromPicker);
+        redSlider.addEventListener('input', updateColorFromSliders);
+        greenSlider.addEventListener('input', updateColorFromSliders);
+        blueSlider.addEventListener('input', updateColorFromSliders);
+
+        function updateColorFromPicker(event) {
+            const color = event.target.value;
+            updateColor(color);
+        }
+
+        function updateColorFromSliders() {
+            const r = redSlider.value;
+            const g = greenSlider.value;
+            const b = blueSlider.value;
+            const hex = rgbToHex(r, g, b);
+            updateColor(hex);
+        }
+
+        async function updateColor(color) {
+            colorBox.style.backgroundColor = color;
+
+            const response = await fetch(`/convert_rgb_to_hsv/${color.substring(1)}`);
+            const data = await response.json();
+
+            hueValue.textContent = `Hue: ${data.hue}`;
+            saturationValue.textContent = `Saturation: ${data.saturation}%`;
+            valueValue.textContent = `Value: ${data.value}%`;
+        }
+
+        function rgbToHex(r, g, b) {
+            return `#${componentToHex(r)}${componentToHex(g)}${componentToHex(b)}`;
+        }
+
+        function componentToHex(c) {
+            const hex = c.toString(16);
+            return hex.length == 1 ? "0" + hex : hex;
+        }
+    </script>
+</body>
+</html>
